@@ -103,4 +103,49 @@ describe('Posts', () => {
     it('1 == 1', function () {
         expect(true).toBe(true)
     });
+
+    //see on korras!
+    it('render the correct amount of posts', () => {
+        const items = wrapper.findAll('.post')
+        expect(items.length).toEqual(testData.length);
+    });
+
+    //no clue ausalt, kuidas neid tüüpe kätte saada
+    it('test if post has media', () => {
+        const mediaItems = wrapper.findAll('.post-image');
+        const images = testData.filter(item => item.media.type === 'image');
+        const videos = testData.filter(item => item.media.type === 'video');
+        const noMedia = testData.filter(item => item.media === 'null');
+
+        if (!mediaItems.isEmpty()) {
+            if (mediaItems.contains(images)) {
+                expect(mediaItems).toContain(images);
+            }
+            else {
+                expect(mediaItems).toContain(videos);
+            }
+        }
+        else {
+            expect(mediaItems).toContain(noMedia);
+        }
+    });
+
+    // kuidas saada vastavas formaadis createTime kätte
+    it('test if the create time is in correct format', () => {
+        const dateandtime = testData.filter(item => item.createTime);
+
+        let now = new Date();
+        let monthNames = ["January", "February", "March", "April", "Mai", "June", "July", "August", "September", "October", "November","December"];
+        let weekdayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        let year = now.getFullYear();
+        let month = monthNames[now.getMonth()];
+        let weekday = weekdayNames[now.getDay()];
+        let date = now.getDate();
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        let format = weekday + ", " + month + " " + date + ", " + year + " " + hours + ":" + minutes + " PM";
+
+        expect(dateandtime.toString()).toMatch(format);
+    });
+
 });
