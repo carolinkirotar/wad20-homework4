@@ -1,5 +1,5 @@
 const UserModel = require('../models/UserModel');
-
+const jwt = require('../library/jwt');
 module.exports = (request, response, next) => {
 
     // This is the place where you will need to implement authorization
@@ -10,10 +10,18 @@ module.exports = (request, response, next) => {
     */
 
     if (request.headers.authorization) {
-        UserModel.getById(1, (user) => {
-            request.currentUser = user;
-            next();
-        });
+        const token = request.headers.authorization.split(" ")[1];
+        const payload = jwt.verifyAccessToken(token)
+        if (payload) {
+            UserModel.getById(payload.id, (user) => {
+                request.currentUser = user;
+                next();
+            });
+        }
+        else {
+            // if there is no payload
+            return response.status(403).json({});
+        }
     } else {
         // if there is no authorization header
 
